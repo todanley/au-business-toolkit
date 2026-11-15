@@ -1,0 +1,5 @@
+name = "au-business-toolkit"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+# Set the RapidAPI secret after deploy:  npx wrangler secret put RAPIDAPI_PROXY_SECRET

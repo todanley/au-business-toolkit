@@ -1,0 +1,440 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AU Business Toolkit",
+    "version": "1.0.0",
+    "description": "ABN/ACN checksum validation, GST maths, and Australian public holidays and business-day calculations for all states and territories (2026–2027)."
+  },
+  "servers": [
+    {
+      "url": "https://au-business-toolkit.<your-subdomain>.workers.dev"
+    }
+  ],
+  "paths": {
+    "/abn/validate": {
+      "get": {
+        "summary": "Validate an ABN (checksum)",
+        "description": "Checks the 11-digit ABN format and ATO checksum and returns the standard spaced format. Does not look up the ABN register.",
+        "tags": [
+          "Identifiers"
+        ],
+        "parameters": [
+          {
+            "name": "abn",
+            "in": "query",
+            "required": true,
+            "description": "ABN, spaces allowed",
+            "schema": {
+              "type": "string"
+            },
+            "example": "51 824 753 556"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/acn/validate": {
+      "get": {
+        "summary": "Validate an ACN/ARBN (check digit)",
+        "description": "Checks the 9-digit ACN/ARBN format and ASIC check digit. Does not look up the company register.",
+        "tags": [
+          "Identifiers"
+        ],
+        "parameters": [
+          {
+            "name": "acn",
+            "in": "query",
+            "required": true,
+            "description": "ACN, spaces allowed",
+            "schema": {
+              "type": "string"
+            },
+            "example": "004 085 616"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/gst": {
+      "get": {
+        "summary": "Add or remove 10% GST",
+        "description": "Rounds to cents.",
+        "tags": [
+          "Tax"
+        ],
+        "parameters": [
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "description": "Amount in dollars",
+            "schema": {
+              "type": "string"
+            },
+            "example": "110"
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "required": false,
+            "description": "add (ex→inc) or remove (inc→ex)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "add",
+                "remove"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/holidays": {
+      "get": {
+        "summary": "Public holidays for a state and year",
+        "description": "Returns each holiday with its type: public, part_day, regional, limited or bank, plus the official source URL.",
+        "tags": [
+          "Holidays"
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "description": "State or territory",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NSW",
+                "VIC",
+                "QLD",
+                "WA",
+                "SA",
+                "TAS",
+                "ACT",
+                "NT"
+              ]
+            },
+            "example": "NSW"
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "description": "2026 or 2027",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 2026
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/business-days/check": {
+      "get": {
+        "summary": "Is a date a business day?",
+        "description": "Weekends and type=public holidays are non-business days.",
+        "tags": [
+          "Business days"
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "description": "State or territory",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NSW",
+                "VIC",
+                "QLD",
+                "WA",
+                "SA",
+                "TAS",
+                "ACT",
+                "NT"
+              ]
+            },
+            "example": "VIC"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2026-11-03"
+          },
+          {
+            "name": "include_bank",
+            "in": "query",
+            "required": false,
+            "description": "Also treat bank holidays (NSW/ACT first Monday in August) as non-business days",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/business-days/add": {
+      "get": {
+        "summary": "Add or subtract business days",
+        "description": "Start date excluded. Negative values go backwards. Max ±500.",
+        "tags": [
+          "Business days"
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "description": "State or territory",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NSW",
+                "VIC",
+                "QLD",
+                "WA",
+                "SA",
+                "TAS",
+                "ACT",
+                "NT"
+              ]
+            },
+            "example": "NSW"
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "Start date YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2026-12-24"
+          },
+          {
+            "name": "days",
+            "in": "query",
+            "required": true,
+            "description": "Integer, -500 to 500",
+            "schema": {
+              "type": "integer"
+            },
+            "example": 5
+          },
+          {
+            "name": "include_bank",
+            "in": "query",
+            "required": false,
+            "description": "Also treat bank holidays (NSW/ACT first Monday in August) as non-business days",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    },
+    "/business-days/count": {
+      "get": {
+        "summary": "Count business days in a range",
+        "description": "Inclusive of both dates. Max 800 days.",
+        "tags": [
+          "Business days"
+        ],
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": true,
+            "description": "State or territory",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NSW",
+                "VIC",
+                "QLD",
+                "WA",
+                "SA",
+                "TAS",
+                "ACT",
+                "NT"
+              ]
+            },
+            "example": "QLD"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": true,
+            "description": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2026-12-01"
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": true,
+            "description": "YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            },
+            "example": "2026-12-31"
+          },
+          {
+            "name": "include_bank",
+            "in": "query",
+            "required": false,
+            "description": "Also treat bank holidays (NSW/ACT first Monday in August) as non-business days",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameter"
+          },
+          "404": {
+            "description": "Unknown endpoint"
+          }
+        }
+      }
+    }
+  }
+}

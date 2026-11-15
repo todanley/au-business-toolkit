@@ -1,0 +1,21 @@
+{
+  "name": "au-business-toolkit",
+  "version": "1.0.0",
+  "description": "ABN/ACN checks, GST maths, Australian public holidays and business days as a Cloudflare Worker API",
+  "private": true,
+  "license": "MIT",
+  "author": "Stanley J",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/todanley/au-business-toolkit.git"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node test/run.mjs",
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "4.162.0"
+  }
+}
