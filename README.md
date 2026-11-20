@@ -78,4 +78,3 @@ npm test
 
 MIT, see `LICENSE`. Holiday dates are public information published by the Australian state and territory governments; source pages are credited in `src/holidays.js`.
 
-Author: Stanley J
